@@ -12,4 +12,4 @@ graph TD
   B --> H[activity 4]
   B --> I[activity 5]
   B --> J[activity 6]
-  C --> I[React App]
+  C --> K[React App]

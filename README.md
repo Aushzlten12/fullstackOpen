@@ -1,4 +1,4 @@
-# Tree structure
+# Directory tree
 
 ```mermaid
 graph TD

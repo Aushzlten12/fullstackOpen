@@ -12,4 +12,6 @@ graph TD
   B --> H[activity 4]
   B --> I[activity 5]
   B --> J[activity 6]
-  C --> K[React App]
+  C --> K[infocourse]
+
+<!-- Const Var -- pending -->

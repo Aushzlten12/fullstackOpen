@@ -13,5 +13,6 @@ graph TD
   B --> I[activity 5]
   B --> J[activity 6]
   C --> K[infocourse]
+```
 
 <!-- Const Var -- pending -->

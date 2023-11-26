@@ -8,26 +8,27 @@ const Button = ({ handleClick, text }) => (
 );
 
 const StatisticsLine = ({ text, value }) => (
-  <p>
-    {text} {value}
-  </p>
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 );
 
 const Statistics = ({ good, neutral, bad }) => {
   const totalReviews = good + neutral + bad;
   const averageReviews = totalReviews === 0 ? 0 : (good - bad) / totalReviews;
   const positivePercentage =
-    totalReviews === 0 ? 0 : (good * 100) / totalReviews;
+    totalReviews === 0 ? 0 : ((good * 100) / totalReviews) + ' %';
   if (totalReviews > 0) {
     return (
-      <div>
+      <table>
         <StatisticsLine text={"good"} value={good} />
         <StatisticsLine text={"neutral"} value={neutral} />
         <StatisticsLine text={"bad"} value={bad} />
         <StatisticsLine text={"all"} value={totalReviews} />
         <StatisticsLine text={"average"} value={averageReviews} />
         <StatisticsLine text={"positive"} value={positivePercentage} />
-      </div>
+      </table>
     );
   } else {
     return <p>No feedback given</p>;

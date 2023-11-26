@@ -7,7 +7,13 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
 
-const Statics = ({ good, neutral, bad }) => {
+const StatisticsLine = ({ text, value }) => (
+  <p>
+    {text} {value}
+  </p>
+);
+
+const Statistics = ({ good, neutral, bad }) => {
   const totalReviews = good + neutral + bad;
   const averageReviews = totalReviews === 0 ? 0 : (good - bad) / totalReviews;
   const positivePercentage =
@@ -15,18 +21,16 @@ const Statics = ({ good, neutral, bad }) => {
   if (totalReviews > 0) {
     return (
       <div>
-        <p>good {good}</p>
-        <p>neutral {neutral}</p>
-        <p>bad {bad}</p>
-        <p>all {totalReviews}</p>
-        <p>average {averageReviews}</p>
-        <p>positive {positivePercentage}%</p>
+        <StatisticsLine text={"good"} value={good} />
+        <StatisticsLine text={"neutral"} value={neutral} />
+        <StatisticsLine text={"bad"} value={bad} />
+        <StatisticsLine text={"all"} value={totalReviews} />
+        <StatisticsLine text={"average"} value={averageReviews} />
+        <StatisticsLine text={"positive"} value={positivePercentage} />
       </div>
     );
   } else {
-    return (
-      <p>No feedback given</p>
-    )
+    return <p>No feedback given</p>;
   }
 };
 // Statics component has been created
@@ -44,7 +48,7 @@ const App = () => {
       <Button handleClick={() => setNeutral(neutral + 1)} text={"Neutral"} />
       <Button handleClick={() => setBad(bad + 1)} text={"Bad"} />
       <Title text={"statics"} />
-      <Statics good={good} neutral={neutral} bad={bad} />
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   );
 };

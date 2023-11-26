@@ -13,6 +13,8 @@ graph TD
   B --> I[activity 5]
   B --> J[activity 6]
   C --> K[infocourse]
+  C --> L[unicafe]
+  C --> M[anecdotes]
 ```
 
 <!-- Const Var -- pending -->

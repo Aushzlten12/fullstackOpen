@@ -1,21 +1,27 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
-const Title = ({ text }) => (
-  <h1>{text}</h1>
-);
+const Title = ({ text }) => <h1>{text}</h1>;
 
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
 
-const Statics = ({ good, neutral, bad }) => (
-  <div>
-    <p>good {good}</p>
-    <p>neutral {neutral}</p>
-    <p>bad {bad}</p>
-  </div>
-);
+const Statics = ({ good, neutral, bad }) => {
+  const totalReviews = good + neutral + bad;
+  const averageReviews = totalReviews === 0 ? 0 : (good - bad) / totalReviews;
+  const positivePercentage = totalReviews === 0 ? 0 : good*100 / totalReviews;
+  return (
+    <div>
+      <p>good {good}</p>
+      <p>neutral {neutral}</p>
+      <p>bad {bad}</p>
+      <p>all {totalReviews}</p>
+      <p>average {averageReviews}</p>
+      <p>positive {positivePercentage}%</p>
+    </div>
+  );
+};
 
 const App = () => {
   // save clicks of each button to its own state

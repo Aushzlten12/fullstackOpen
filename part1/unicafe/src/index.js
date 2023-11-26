@@ -10,17 +10,24 @@ const Button = ({ handleClick, text }) => (
 const Statics = ({ good, neutral, bad }) => {
   const totalReviews = good + neutral + bad;
   const averageReviews = totalReviews === 0 ? 0 : (good - bad) / totalReviews;
-  const positivePercentage = totalReviews === 0 ? 0 : good*100 / totalReviews;
-  return (
-    <div>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {totalReviews}</p>
-      <p>average {averageReviews}</p>
-      <p>positive {positivePercentage}%</p>
-    </div>
-  );
+  const positivePercentage =
+    totalReviews === 0 ? 0 : (good * 100) / totalReviews;
+  if (totalReviews > 0) {
+    return (
+      <div>
+        <p>good {good}</p>
+        <p>neutral {neutral}</p>
+        <p>bad {bad}</p>
+        <p>all {totalReviews}</p>
+        <p>average {averageReviews}</p>
+        <p>positive {positivePercentage}%</p>
+      </div>
+    );
+  } else {
+    return (
+      <p>No feedback given</p>
+    )
+  }
 };
 // Statics component has been created
 

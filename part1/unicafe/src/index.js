@@ -22,6 +22,7 @@ const Statics = ({ good, neutral, bad }) => {
     </div>
   );
 };
+// Statics component has been created
 
 const App = () => {
   // save clicks of each button to its own state

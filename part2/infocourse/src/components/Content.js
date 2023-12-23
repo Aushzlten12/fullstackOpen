@@ -2,7 +2,10 @@ import React from "react";
 import Part from "./Part";
 
 const Content = ({ parts }) => {
-  const totalExercises = parts.reduce((s, p) => s + p.exercises, 0);
+  const totalExercises = parts.reduce((s, p) => {
+    // console.log("what is happening", s, p);
+    return s + p.exercises;
+  }, 0);
   return (
     <div>
       {parts.map((part) => {

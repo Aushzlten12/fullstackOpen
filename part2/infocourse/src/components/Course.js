@@ -7,9 +7,9 @@ const Course = ({ courses }) => {
     <div>
       {courses.map((course) => {
         return (
-          <div>
+          <div key={course.id}>
             <Header name={course.name} />
-            <Content parts={course.parts} />
+            <Content courseID={course.id} parts={course.parts} />
           </div>
         );
       })}

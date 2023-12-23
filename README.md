@@ -15,6 +15,7 @@ graph TD
   C --> K[infocourse]
   C --> L[unicafe]
   C --> M[anecdotes]
+  D --> N[infocourse/using components]
 ```
 
 <!-- Const Var -- pending -->

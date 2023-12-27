@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import WeatherInfo from "./Weather";
 
 const CountryInformation = ({ country }) => {
-  const [weather, setWeather] = useState({});
+  const [weatherInfo, setWeatherInfo] = useState(null);
 
   useEffect(() => {
     const api_key = process.env.REACT_APP_API_KEY;
@@ -11,12 +12,16 @@ const CountryInformation = ({ country }) => {
         `https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appid=${api_key}&units=metric`,
       )
       .then((response) => {
-        setWeather(response.data);
+        const information = <WeatherInfo weather={response.data} />;
+        setWeatherInfo(information);
       })
       .catch((error) => {
         console.error("Error fetching weather data:", error);
+        setWeatherInfo(
+          <p>Error fetching weather data for {country.capital}.</p>,
+        );
       });
-  }, [country.capital]); // Dependencia para re-ejecutar el efecto si la capital cambia
+  }, [country.capital]);
 
   return (
     <div>
@@ -30,19 +35,9 @@ const CountryInformation = ({ country }) => {
         ))}
       </ul>
       <img src={country.flags.png} alt={country.name.common} />
+
       <h2>Weather in {country.capital}</h2>
-      <p>
-        {" "}
-        <strong>temperature: </strong> {weather.main.temp}
-      </p>
-      <p>
-        {" "}
-        <strong>description: </strong> {weather.weather[0].description}
-      </p>
-      <p>
-        <strong>wind: </strong>
-        {weather.wind.speed} mps direction {weather.wind.deg} degrees
-      </p>
+      {weatherInfo}
     </div>
   );
 };

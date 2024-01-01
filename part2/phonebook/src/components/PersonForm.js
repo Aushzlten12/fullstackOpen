@@ -23,8 +23,8 @@ const PersonForm = ({ persons, setPersons, method }) => {
       (person) => person.name === personObject.name,
     );
     if (!personExists) {
-      method.create(personObject).then((response) => {
-        setPersons(persons.concat(response.data));
+      method.create(personObject).then((newPerson) => {
+        setPersons(persons.concat(newPerson));
         setNewName("");
         setNewPhone("");
       });

@@ -9,8 +9,8 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [fieldSearch, setFieldSearch] = useState("");
   const hook = () => {
-    personsService.getAll().then((response) => {
-      setPersons(response.data);
+    personsService.getAll().then((InitialPersons) => {
+      setPersons(InitialPersons);
     });
   };
 

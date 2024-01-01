@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ persons, setPersons, method }) => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const handleNoteChange = (event) => {
@@ -17,18 +17,20 @@ const PersonForm = ({ persons, setPersons }) => {
     event.preventDefault();
     const personObject = {
       name: newName,
-      phone: newPhone,
+      number: newPhone,
     };
     const personExists = persons.some(
       (person) => person.name === personObject.name,
     );
     if (!personExists) {
-      setPersons(persons.concat(personObject));
+      method.create(personObject).then((response) => {
+        setPersons(persons.concat(response.data));
+        setNewName("");
+        setNewPhone("");
+      });
     } else {
       alert(`${personObject.name} is already added to phonebook`);
     }
-    setNewName("");
-    setNewPhone("");
   };
   return (
     <div>

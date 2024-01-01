@@ -1,15 +1,15 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/Filter";
 import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
+import personsService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [fieldSearch, setFieldSearch] = useState("");
   const hook = () => {
-    axios.get("http://localhost:3001/persons").then((response) => {
+    personsService.getAll().then((response) => {
       setPersons(response.data);
     });
   };
@@ -24,7 +24,11 @@ const App = () => {
       <h1>Phonebook</h1>
       <Filter fieldSearch={fieldSearch} setFieldSearch={setFieldSearch} />
       <h2>Add a New</h2>
-      <PersonForm persons={persons} setPersons={setPersons} />
+      <PersonForm
+        persons={persons}
+        setPersons={setPersons}
+        method={personsService}
+      />
       <h2>Persons</h2>
       ...
       <Persons persons={filteredPersons} />

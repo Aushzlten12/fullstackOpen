@@ -31,7 +31,11 @@ const App = () => {
       />
       <h2>Persons</h2>
       ...
-      <Persons persons={filteredPersons} />
+      <Persons
+        persons={filteredPersons}
+        setter={setPersons}
+        method={personsService}
+      />
     </div>
   );
 };

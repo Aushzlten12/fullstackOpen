@@ -16,6 +16,8 @@ graph TD
   C --> L[unicafe]
   C --> M[anecdotes]
   D --> N[infocourse/using components]
+  D --> O[phonebook]
+  D --> P[searchcountry]
 ```
 
 <!-- Const Var -- pending -->

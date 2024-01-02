@@ -4,12 +4,10 @@ const PersonForm = ({ persons, setPersons, method }) => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const handleNoteChange = (event) => {
-    console.log(event.target.value);
     setNewName(event.target.value);
   };
 
   const handlePhoneChange = (event) => {
-    console.log(event.target.value);
     setNewPhone(event.target.value);
   };
 
@@ -29,7 +27,28 @@ const PersonForm = ({ persons, setPersons, method }) => {
         setNewPhone("");
       });
     } else {
-      alert(`${personObject.name} is already added to phonebook`);
+      if (
+        window.confirm(
+          `${personObject.name} is already added to phonebook, replace the old number with a new one`,
+        )
+      ) {
+        const id = persons.find(
+          (person) => person.name === personObject.name,
+        ).id;
+        method.update(personObject, id).then((personUpdated) =>
+          setPersons(
+            persons.map((item) => {
+              if (item.id === id) {
+                return personUpdated;
+              } else {
+                return item;
+              }
+            }),
+          ),
+        );
+        setNewName("");
+        setNewPhone("");
+      }
     }
   };
   return (

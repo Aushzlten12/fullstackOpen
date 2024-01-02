@@ -2,7 +2,6 @@ import React from "react";
 
 const Filter = ({ fieldSearch, setFieldSearch }) => {
   const handleFieldSearch = (event) => {
-    console.log(event.target.value);
     setFieldSearch(event.target.value);
   };
   return (

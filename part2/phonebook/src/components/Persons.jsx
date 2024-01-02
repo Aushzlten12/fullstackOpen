@@ -13,16 +13,20 @@ const Persons = ({ persons, setter, method }) => {
   };
   return (
     <div>
-      {persons.map((person) => {
-        return (
-          <div key={person.id}>
-            <p>
-              {person.name} {person.number}
-              <button onClick={() => handleDeleteClick(person)}>delete</button>
-            </p>
-          </div>
-        );
-      })}
+      <ul>
+        {persons.map((person) => {
+          return (
+            <li key={person.id}>
+              <p>
+                {person.name} {person.number}
+                <button onClick={() => handleDeleteClick(person)}>
+                  delete
+                </button>
+              </p>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 };

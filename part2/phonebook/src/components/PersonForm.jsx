@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 
-const PersonForm = ({ persons, setPersons, method }) => {
+const PersonForm = ({
+  persons,
+  setPersons,
+  method,
+  message,
+  setterMessage,
+}) => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const handleNoteChange = (event) => {
@@ -23,6 +29,10 @@ const PersonForm = ({ persons, setPersons, method }) => {
     if (!personExists) {
       method.create(personObject).then((newPerson) => {
         setPersons(persons.concat(newPerson));
+        setterMessage(`Added ${personObject.name}`);
+        setTimeout(() => {
+          setterMessage(null);
+        }, 5000);
         setNewName("");
         setNewPhone("");
       });
@@ -35,7 +45,7 @@ const PersonForm = ({ persons, setPersons, method }) => {
         const id = persons.find(
           (person) => person.name === personObject.name,
         ).id;
-        method.update(personObject, id).then((personUpdated) =>
+        method.update(personObject, id).then((personUpdated) => {
           setPersons(
             persons.map((item) => {
               if (item.id === id) {
@@ -44,10 +54,14 @@ const PersonForm = ({ persons, setPersons, method }) => {
                 return item;
               }
             }),
-          ),
-        );
-        setNewName("");
-        setNewPhone("");
+          );
+          setterMessage(`Updated ${personObject.name}`);
+          setTimeout(() => {
+            setterMessage(null);
+          }, 5000);
+          setNewName("");
+          setNewPhone("");
+        });
       }
     }
   };

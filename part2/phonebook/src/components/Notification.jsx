@@ -1,8 +1,10 @@
 import React from "react";
 
-const Notification = ({ message }) => {
+const Notification = ({ message, color }) => {
   const ShowStyle = {
     display: "block",
+    color: color,
+    borderColor: color,
   };
   if (message === null) {
     return null;

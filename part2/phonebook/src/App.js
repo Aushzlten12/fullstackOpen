@@ -10,6 +10,7 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [fieldSearch, setFieldSearch] = useState("");
   const [successMessage, setSuccessMessage] = useState(null);
+  const [colorMessage, setColorMessage] = useState("green");
   const hook = () => {
     personsService.getAll().then((InitialPersons) => {
       setPersons(InitialPersons);
@@ -24,7 +25,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={successMessage} />
+      <Notification message={successMessage} color={colorMessage} />
       <Filter fieldSearch={fieldSearch} setFieldSearch={setFieldSearch} />
       <h2>Add a New</h2>
       <PersonForm
@@ -32,7 +33,7 @@ const App = () => {
         setPersons={setPersons}
         method={personsService}
         setterMessage={setSuccessMessage}
-        message={successMessage}
+        setterColor={setColorMessage}
       />
       <h2>Persons</h2>
       ...

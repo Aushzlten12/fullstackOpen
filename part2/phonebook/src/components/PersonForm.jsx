@@ -4,8 +4,8 @@ const PersonForm = ({
   persons,
   setPersons,
   method,
-  message,
   setterMessage,
+  setterColor,
 }) => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
@@ -29,6 +29,7 @@ const PersonForm = ({
     if (!personExists) {
       method.create(personObject).then((newPerson) => {
         setPersons(persons.concat(newPerson));
+        setterColor("green");
         setterMessage(`Added ${personObject.name}`);
         setTimeout(() => {
           setterMessage(null);
@@ -45,23 +46,38 @@ const PersonForm = ({
         const id = persons.find(
           (person) => person.name === personObject.name,
         ).id;
-        method.update(personObject, id).then((personUpdated) => {
-          setPersons(
-            persons.map((item) => {
-              if (item.id === id) {
-                return personUpdated;
-              } else {
-                return item;
-              }
-            }),
-          );
-          setterMessage(`Updated ${personObject.name}`);
-          setTimeout(() => {
-            setterMessage(null);
-          }, 5000);
-          setNewName("");
-          setNewPhone("");
-        });
+        method
+          .update(personObject, id)
+          .then((personUpdated) => {
+            setPersons(
+              persons.map((item) => {
+                if (item.id === id) {
+                  return personUpdated;
+                } else {
+                  return item;
+                }
+              }),
+            );
+            setterColor("green");
+            setterMessage(`Updated ${personObject.name}`);
+            setTimeout(() => {
+              setterMessage(null);
+            }, 5000);
+            setNewName("");
+            setNewPhone("");
+          })
+          .catch(() => {
+            setterColor("red");
+            setterMessage(
+              `Information of ${personObject.name} has already been removed from server`,
+            );
+            setPersons(
+              persons.filter((item) => item.name !== personObject.name),
+            );
+            setTimeout(() => {
+              setterMessage(null);
+            }, 5000);
+          });
       }
     }
   };

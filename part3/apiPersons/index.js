@@ -44,6 +44,22 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
+app.delete("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const personfind = persons.find((person) => person.id === id);
+
+  if (!personfind) {
+    return response.status(404).json({ message: "Person not found" });
+  }
+
+  try {
+    persons = persons.filter((person) => person.id !== id);
+    response.status(204).end();
+  } catch (error) {
+    response.status(500).json({ message: "Error" });
+  }
+});
+
 const PORT = 3001;
 
 app.listen(PORT, () => {

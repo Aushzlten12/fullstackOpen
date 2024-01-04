@@ -34,6 +34,16 @@ app.get("/info", (request, response) => {
   response.end(`Phonebook has info for ${numpersons} people\n${date}`);
 });
 
+app.get("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const personfind = persons.find((person) => person.id === id);
+  if (personfind) {
+    response.json(personfind);
+  } else {
+    response.status(404).json({ message: "Person not found" });
+  }
+});
+
 const PORT = 3001;
 
 app.listen(PORT, () => {

@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 let persons = [
   {
     name: "Arto Hellas",
@@ -58,6 +60,19 @@ app.delete("/api/persons/:id", (request, response) => {
   } catch (error) {
     response.status(500).json({ message: "Error" });
   }
+});
+
+app.post("/api/persons", (request, response) => {
+  const id = Math.floor(Math.random() * 10000);
+
+  const body = request.body;
+  const newPerson = {
+    name: body.name,
+    number: body.number,
+    id: id,
+  };
+  persons = persons.concat(newPerson);
+  response.json(newPerson);
 });
 
 const PORT = 3001;

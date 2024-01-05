@@ -3,7 +3,16 @@ var morgan = require("morgan");
 const app = express();
 
 app.use(express.json());
-app.use(morgan("dev"));
+
+morgan.token("body", function (req, res) {
+  return JSON.stringify(req.body);
+});
+
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms - :body",
+  ),
+);
 
 let persons = [
   {
@@ -75,7 +84,7 @@ app.post("/api/persons", (request, response) => {
   if (!body.name || body.name.trim() === "") {
     return response.status(400).json({ error: "Name not be blank" });
   }
-  if (!persons.map((person) => person.name).includes(body.name)) {
+  if (persons.map((person) => person.name).includes(body.name)) {
     return response.status(409).json({ error: "Name must be unique" });
   }
 

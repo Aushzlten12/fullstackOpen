@@ -66,6 +66,17 @@ app.post("/api/persons", (request, response) => {
   const id = Math.floor(Math.random() * 10000);
 
   const body = request.body;
+
+  if (!body.number || body.number.trim() === "") {
+    return response.status(400).json({ error: "Number not be blank" });
+  }
+  if (!body.name || body.name.trim() === "") {
+    return response.status(400).json({ error: "Name not be blank" });
+  }
+  if (!persons.map((person) => person.name).includes(body.name)) {
+    return response.status(409).json({ error: "Name must be unique" });
+  }
+
   const newPerson = {
     name: body.name,
     number: body.number,

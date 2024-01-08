@@ -14,7 +14,7 @@ const App = () => {
           id: 1,
         },
         {
-          name: "Using props to pass data",
+          nam: "Using props to pass data",
           exercises: 7,
           id: 2,
         },

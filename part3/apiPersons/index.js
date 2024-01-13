@@ -18,12 +18,12 @@ app.use(
 
 let persons = [
   {
-    name: "Arto Hellas",
+    name: "Arturo Hellas",
     number: "040-123456",
     id: 1,
   },
   {
-    name: "Ada Lovelace",
+    name: "Adam Lovelace",
     number: "39-44-5323523",
     id: 2,
   },

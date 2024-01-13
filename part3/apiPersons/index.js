@@ -53,27 +53,20 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
-  const id = Math.floor(Math.random() * 10000);
-
   const body = request.body;
 
-  if (!body.number || body.number.trim() === "") {
-    return response.status(400).json({ error: "Number not be blank" });
-  }
-  if (!body.name || body.name.trim() === "") {
-    return response.status(400).json({ error: "Name not be blank" });
-  }
-  if (persons.map((person) => person.name).includes(body.name)) {
-    return response.status(409).json({ error: "Name must be unique" });
+  if (body.name === undefined || body.number === undefined) {
+    return response.status(400).json({ error: "content missing" });
   }
 
-  const newPerson = {
+  const person = new Agenda({
     name: body.name,
     number: body.number,
-    id: id,
-  };
-  persons = persons.concat(newPerson);
-  response.json(newPerson);
+  });
+
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 });
 
 const PORT = process.env.PORT;

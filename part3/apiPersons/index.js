@@ -37,19 +37,13 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const personfind = persons.find((person) => person.id === id);
-
-  if (!personfind) {
-    return response.status(404).json({ message: "Person not found" });
-  }
-
-  try {
-    persons = persons.filter((person) => person.id !== id);
-    response.status(204).end();
-  } catch (error) {
-    response.status(500).json({ message: "Error" });
-  }
+  Agenda.findByIdAndDelete(request.params.id).then((result) => {
+    if (result) {
+      response.status(204).end();
+    } else {
+      response.status(404).json({ error: "person not found" });
+    }
+  });
 });
 
 app.post("/api/persons", (request, response) => {
@@ -68,6 +62,8 @@ app.post("/api/persons", (request, response) => {
     response.json(savedPerson);
   });
 });
+
+// error handlers
 
 const PORT = process.env.PORT;
 

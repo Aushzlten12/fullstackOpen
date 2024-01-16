@@ -26,11 +26,21 @@ app.get("/api/persons", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-// app.get("/info", (request, response) => {
-//   const numpersons = persons.length;
-//   const date = new Date().toString();
-//   response.end(`Phonebook has info for ${numpersons} people\n${date}`);
-// });
+app.get("/info", (request, response, next) => {
+  Agenda.find({})
+    .then((persons) => {
+      const numpersons = persons.length;
+      const date = new Date().toString();
+      response.end(`Phonebook has info for ${numpersons} people\n${date}`);
+    })
+    .catch((error) => next(error));
+});
+
+const NotFound = () => {
+  const notFoundError = new Error("Person not found");
+  notFoundError.name = "NotFoundError";
+  return notFoundError;
+};
 
 app.get("/api/persons/:id", (request, response, next) => {
   Agenda.findById(request.params.id)
@@ -38,7 +48,7 @@ app.get("/api/persons/:id", (request, response, next) => {
       if (person) {
         response.json(person);
       } else {
-        response.status(404).json({ error: "person not found" });
+        next(NotFound());
       }
     })
     .catch((error) => next(error));
@@ -50,7 +60,7 @@ app.delete("/api/persons/:id", (request, response, next) => {
       if (result) {
         response.status(204).end();
       } else {
-        response.status(404).json({ error: "person not found" });
+        next(NotFound());
       }
     })
     .catch((error) => next(error));
@@ -63,33 +73,57 @@ app.post("/api/persons", (request, response, next) => {
     return response.status(400).json({ error: "content missing" });
   }
 
-  const person = new Agenda({
+  Agenda.find({ name: body.name }).then((result) => {
+    if (result.length > 0) {
+      console.log(result);
+      const conflictError = new Error("person already exists");
+      conflictError.name = "ConflictError";
+      next(conflictError);
+    } else {
+      const person = new Agenda({
+        name: body.name,
+        number: body.number,
+      });
+
+      person
+        .save()
+        .then((savedPerson) => {
+          response.json(savedPerson);
+        })
+        .catch((error) => next(error));
+    }
+  });
+});
+
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+
+  if (body.name === undefined || body.number === undefined) {
+    return response.status(400).json({ error: "content missing" });
+  }
+
+  const person = {
     name: body.name,
     number: body.number,
-  });
+  };
 
-  person
-    .save()
-    .then((savedPerson) => {
-      response.json(savedPerson);
-    })
+  Agenda.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedNote) => response.json(updatedNote))
     .catch((error) => next(error));
 });
 
 // error handlers
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: "unknown endpoint" });
-};
-
-app.use(unknownEndpoint);
 
 const errorHandler = (error, request, response, next) => {
   console.log(error.message);
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "NotFoundError") {
+    return response.status(404).json({ error: "person not found" });
+  } else if (error.name === "ConflictError") {
+    return response.status(409).json({ error: "person already exists" });
   }
-
   next(error);
 };
 

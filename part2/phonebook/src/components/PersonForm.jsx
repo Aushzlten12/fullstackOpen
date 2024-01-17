@@ -35,7 +35,7 @@ const PersonForm = ({
           setterMessage(`Added ${personObject.name}`);
           setTimeout(() => {
             setterMessage(null);
-          }, 5000);
+          }, 3000);
           setNewName("");
           setNewPhone("");
         })
@@ -56,7 +56,7 @@ const PersonForm = ({
           setterMessage(messageError);
           setTimeout(() => {
             setterMessage(null);
-          }, 5000);
+          }, 3000);
           setNewName("");
           setNewPhone("");
         });

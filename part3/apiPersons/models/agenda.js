@@ -19,10 +19,12 @@ const agendaSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    minlength: [3, "Must be at least 3 characters long"],
   },
   number: {
     type: String,
     required: true,
+    maxlength: [8, "Must be at most 8 characters long"],
   },
 });
 

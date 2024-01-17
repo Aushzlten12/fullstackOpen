@@ -2,8 +2,9 @@ require("dotenv").config();
 const express = require("express");
 var morgan = require("morgan");
 const Agenda = require("./models/agenda");
+const cors = require("cors");
 const app = express();
-
+app.use(cors());
 app.use(express.static("build"));
 
 app.use(express.json());
@@ -81,7 +82,7 @@ app.post("/api/persons", (request, response, next) => {
   person
     .save()
     .then((savedPerson) => {
-      savedPerson.toJSON();
+      return savedPerson.toJSON();
     })
     .then((savedAndFormattedPerson) => response.json(savedAndFormattedPerson))
     .catch((error) => next(error));
@@ -114,7 +115,7 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === "NotFoundError") {
     return response.status(404).json({ error: "person not found" });
   } else if (error.name === "ValidationError") {
-    return response.status(409).json({ error: "person already exists" });
+    return response.status(409).json({ error: "Error: ", error });
   }
   next(error);
 };

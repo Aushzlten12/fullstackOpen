@@ -27,16 +27,39 @@ const PersonForm = ({
       (person) => person.name === personObject.name,
     );
     if (!personExists) {
-      method.create(personObject).then((newPerson) => {
-        setPersons(persons.concat(newPerson));
-        setterColor("green");
-        setterMessage(`Added ${personObject.name}`);
-        setTimeout(() => {
-          setterMessage(null);
-        }, 5000);
-        setNewName("");
-        setNewPhone("");
-      });
+      method
+        .create(personObject)
+        .then((newPerson) => {
+          setPersons(persons.concat(newPerson));
+          setterColor("green");
+          setterMessage(`Added ${personObject.name}`);
+          setTimeout(() => {
+            setterMessage(null);
+          }, 5000);
+          setNewName("");
+          setNewPhone("");
+        })
+        .catch((error) => {
+          setterColor("red");
+          const messageIntro = "Person validation failed: ";
+          var errorsMessages = [];
+          if (error.response.data.error.errors.name !== undefined) {
+            const messageErrorName = `name: Path 'name' (${personObject.name}) is shorter than minimum allowed length (3)`;
+            errorsMessages.push(messageErrorName);
+          }
+
+          if (error.response.data.error.errors.number !== undefined) {
+            const messageErrorNumber = `number: Path 'number' (${personObject.number}) is longer than maximum allowed length (8)`;
+            errorsMessages.push(messageErrorNumber);
+          }
+          const messageError = messageIntro + errorsMessages.join(" ");
+          setterMessage(messageError);
+          setTimeout(() => {
+            setterMessage(null);
+          }, 5000);
+          setNewName("");
+          setNewPhone("");
+        });
     } else {
       if (
         window.confirm(

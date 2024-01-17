@@ -9,7 +9,7 @@ app.use(express.static("build"));
 
 app.use(express.json());
 
-morgan.token("body", function (req, res) {
+morgan.token("body", function (req) {
   return JSON.stringify(req.body);
 });
 
@@ -19,7 +19,7 @@ app.use(
   ),
 );
 
-app.get("/api/persons", (request, response, next) => {
+app.get("/api/persons", (response, next) => {
   Agenda.find({})
     .then((persons) => {
       response.json(persons);
@@ -27,7 +27,7 @@ app.get("/api/persons", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-app.get("/info", (request, response, next) => {
+app.get("/info", (response, next) => {
   Agenda.find({})
     .then((persons) => {
       const numpersons = persons.length;
@@ -107,7 +107,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 
 // error handlers
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, response, next) => {
   console.log(error.message);
 
   if (error.name === "CastError") {
@@ -115,7 +115,7 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === "NotFoundError") {
     return response.status(404).json({ error: "person not found" });
   } else if (error.name === "ValidationError") {
-    return response.status(409).json({ error: "Error: ", error });
+    return response.status(409).json({ error: "Error in validation" });
   }
   next(error);
 };

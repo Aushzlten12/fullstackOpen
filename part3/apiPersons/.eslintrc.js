@@ -3,8 +3,9 @@ module.exports = {
     browser: true,
     commonjs: true,
     es2021: true,
+    node: true,
   },
-  extends: "",
+  extends: "eslint:recommended",
   overrides: [
     {
       env: {
@@ -17,7 +18,12 @@ module.exports = {
     },
   ],
   parserOptions: {
-    ecmaVersion: "latest",
+    ecmaVersion: "2021",
   },
-  rules: {},
+  rules: {
+    indent: ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    quotes: ["error", "double"],
+    semi: ["error", "always"],
+  },
 };

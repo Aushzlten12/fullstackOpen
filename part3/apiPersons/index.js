@@ -73,26 +73,18 @@ app.post("/api/persons", (request, response, next) => {
     return response.status(400).json({ error: "content missing" });
   }
 
-  Agenda.find({ name: body.name }).then((result) => {
-    if (result.length > 0) {
-      console.log(result);
-      const conflictError = new Error("person already exists");
-      conflictError.name = "ConflictError";
-      next(conflictError);
-    } else {
-      const person = new Agenda({
-        name: body.name,
-        number: body.number,
-      });
-
-      person
-        .save()
-        .then((savedPerson) => {
-          response.json(savedPerson);
-        })
-        .catch((error) => next(error));
-    }
+  const person = new Agenda({
+    name: body.name,
+    number: body.number,
   });
+
+  person
+    .save()
+    .then((savedPerson) => {
+      savedPerson.toJSON();
+    })
+    .then((savedAndFormattedPerson) => response.json(savedAndFormattedPerson))
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
@@ -121,7 +113,7 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: "malformatted id" });
   } else if (error.name === "NotFoundError") {
     return response.status(404).json({ error: "person not found" });
-  } else if (error.name === "ConflictError") {
+  } else if (error.name === "ValidationError") {
     return response.status(409).json({ error: "person already exists" });
   }
   next(error);

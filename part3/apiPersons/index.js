@@ -19,7 +19,7 @@ app.use(
   ),
 );
 
-app.get("/api/persons", (response, next) => {
+app.get("/api/persons", (request, response, next) => {
   Agenda.find({})
     .then((persons) => {
       response.json(persons);
@@ -27,7 +27,7 @@ app.get("/api/persons", (response, next) => {
     .catch((error) => next(error));
 });
 
-app.get("/info", (response, next) => {
+app.get("/info", (request, response, next) => {
   Agenda.find({})
     .then((persons) => {
       const numpersons = persons.length;
@@ -107,7 +107,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 
 // error handlers
 
-const errorHandler = (error, response, next) => {
+const errorHandler = (error, request, response, next) => {
   console.log(error.message);
 
   if (error.name === "CastError") {

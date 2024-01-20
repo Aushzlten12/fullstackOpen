@@ -5,8 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "jest --watchAll --verbose",
+    "eslint": "eslint ."
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "keywords": [
     "Api",
@@ -23,6 +27,8 @@
     "mongoose": "^8.1.0"
   },
   "devDependencies": {
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
     "nodemon": "^3.0.3"
   }
 }

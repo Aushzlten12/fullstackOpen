@@ -10,4 +10,20 @@ const totalLikes = (blogs) => {
   return blogs.reduce(reducer, 0);
 };
 
-module.exports = { dummy, totalLikes };
+const favoriteBlog = (blogs) => {
+  blogs.sort(function (a, b) {
+    return b.likes - a.likes;
+  });
+  const favoriteblog = blogs.shift();
+  if (favoriteblog === undefined) {
+    return {};
+  } else {
+    return {
+      title: favoriteblog.title,
+      author: favoriteblog.author,
+      likes: favoriteblog.likes,
+    };
+  }
+};
+
+module.exports = { dummy, totalLikes, favoriteBlog };

@@ -32,7 +32,33 @@ test("all blogs are returned", async () => {
 test("unique identifier is named id", async () => {
   const response = await api.get("/api/blogs");
   expect(response.body[0].id).toBeDefined();
-  expect(response.body[0]._id).not.toBeDefined();
+  expect(response.body[0]._id).toBeUndefined();
+});
+
+test("a valid blog can be added", async () => {
+  const blog = {
+    title: "New Blog",
+    author: "New Author",
+    url: "www.newurl.com",
+    likes: 10,
+  };
+  await api
+    .post("/api/blogs")
+    .send(blog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
+  const blogsContent = blogsAtEnd.map((blog) => {
+    return {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes,
+    };
+  });
+  expect(blogsContent).toContainEqual(blog);
 });
 
 afterAll(() => {

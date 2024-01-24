@@ -61,6 +61,37 @@ test("a valid blog can be added", async () => {
   expect(blogsContent).toContainEqual(blog);
 });
 
+test("blog without likes property defaults to 0", async () => {
+  const blog = {
+    title: "New Blog",
+    author: "New Author",
+    url: "www.newurl.com",
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(blog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
+  const blogsContent = blogsAtEnd.map((blog) => {
+    return {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes,
+    };
+  });
+  expect(blogsContent).toContainEqual({
+    title: "New Blog",
+    author: "New Author",
+    url: "www.newurl.com",
+    likes: 0,
+  });
+});
+
 afterAll(() => {
   mongoose.connection.close();
   console.log("Closed connection");

@@ -15,6 +15,20 @@ const initialBlogs = [
   },
 ];
 
+const nonExistingId = async () => {
+  const blog = new Blog({
+    title: "None",
+    author: "Me",
+    url: "www.none.com",
+    likes: 10,
+  });
+
+  await blog.save();
+  await Blog.deleteOne({ title: "None" });
+
+  return blog._id.toString();
+};
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({});
   return blogs.map((blog) => blog.toJSON());
@@ -23,4 +37,5 @@ const blogsInDb = async () => {
 module.exports = {
   initialBlogs,
   blogsInDb,
+  nonExistingId,
 };

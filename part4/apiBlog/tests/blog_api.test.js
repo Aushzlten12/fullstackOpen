@@ -26,6 +26,7 @@ test("blogs are returned as json", async () => {
 
 test("all blogs are returned", async () => {
   const response = await api.get("/api/blogs");
+  console.log(response);
   expect(response.body).toHaveLength(helper.initialBlogs.length);
 });
 
@@ -90,6 +91,15 @@ test("blog without likes property defaults to 0", async () => {
     url: "www.newurl.com",
     likes: 0,
   });
+});
+
+test("if title and url are missing, 400 is returned", async () => {
+  const blog = {
+    author: "New Author",
+    likes: 10,
+  };
+
+  await api.post("/api/blogs").send(blog).expect(400);
 });
 
 afterAll(() => {

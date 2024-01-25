@@ -8,7 +8,7 @@ graph TD
   A --> D[part2]
   A --> E[part3]
   A --> F[part4]
-  A --> G[part6]
+  A --> G[part5]
   B --> H[activity 4]
   B --> I[activity 5]
   B --> J[activity 6]

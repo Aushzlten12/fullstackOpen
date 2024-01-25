@@ -18,6 +18,8 @@ graph TD
   D --> N[infocourse/using components]
   D --> O[phonebook]
   D --> P[searchcountry]
+  E --> Q[apiPersons]
+  F --> R[apiBlog]
 ```
 
 <!-- Const Var -- pending -->

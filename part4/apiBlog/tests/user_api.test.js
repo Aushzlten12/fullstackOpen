@@ -24,13 +24,13 @@ describe("when there is initially one user in db", () => {
       password: "root123",
     };
 
-    const result = await api
+    await api
       .post("/api/users")
       .send(newUser)
       .expect(200)
       .expect("Content-Type", /application\/json/);
 
-    console.log(result);
+    // console.log(result);
 
     const usersAtEnd = await helper.usersInDb();
 
@@ -41,5 +41,62 @@ describe("when there is initially one user in db", () => {
     expect(usernames).toContain(newUser.username);
   });
 
-  test("");
+  test("creation fails with proper statuscode and message if username already taken", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "root",
+      password: "salainen",
+    };
+
+    const response = await api.post("/api/users").send(newUser).expect(400);
+    expect(response.body.error).toMatch(/username/i) &&
+      expect(response.body.error).toMatch(/unique/i);
+
+    const usersAtEnd = await helper.usersInDb();
+
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+});
+
+describe("creation fails with proper statuscode and message if params not valid", () => {
+  test("invalid username", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "me",
+      password: "root",
+    };
+
+    const response = await api.post("/api/users").send(newUser).expect(400);
+    expect(response.body.error).toContain(
+      "username must be at least 3 characters",
+    );
+
+    const usersAtEnd = await helper.usersInDb();
+
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+
+    const usernames = usersAtEnd.map((u) => u.username);
+
+    expect(usernames).not.toContain(newUser.username);
+  });
+
+  test("invalid password", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "joseph",
+      password: "ad",
+    };
+
+    const response = await api.post("/api/users").send(newUser).expect(400);
+    expect(response.body.error).toContain(
+      "password must be at least 3 characters",
+    );
+
+    const usersAtEnd = await helper.usersInDb();
+
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
 });

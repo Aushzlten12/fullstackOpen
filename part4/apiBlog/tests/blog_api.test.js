@@ -24,7 +24,7 @@ describe("when there is initially some blogs saved", () => {
 
   test("all blogs are returned", async () => {
     const response = await api.get("/api/blogs");
-    console.log(response);
+    // console.log(response);
     expect(response.body).toHaveLength(helper.initialBlogs.length);
   });
   test("unique identifier is named id", async () => {
@@ -173,5 +173,5 @@ describe("updating a blog", () => {
 
 afterAll(() => {
   mongoose.connection.close();
-  console.log("Closed connection");
+  // console.log("Closed connection");
 });

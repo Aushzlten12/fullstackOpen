@@ -1,13 +1,15 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("./../app");
+const bcrypt = require("bcrypt");
 const helper = require("./test_helper");
 const api = supertest(app);
 const Blog = require("./../models/blog");
+const User = require("./../models/user");
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-
+  await User.deleteMany({});
   const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog));
   const promiseArray = blogObjects.map((blog) => blog.save());
 
@@ -64,13 +66,23 @@ describe("viewing a specific blog", () => {
 
 describe("addition of a new blog", () => {
   test("a valid blog can be added", async () => {
+    const user = {
+      username: "root",
+      password: "sekret",
+    };
+    const result = await api
+      .post("/api/users")
+      .send(user)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
     const blog = {
       title: "New Blog",
       author: "New Author",
       url: "www.newurl.com",
       likes: 10,
+      userId: result.body.id,
     };
-    await api
+    const blogCreated = await api
       .post("/api/blogs")
       .send(blog)
       .expect(201)
@@ -78,22 +90,39 @@ describe("addition of a new blog", () => {
 
     const blogsAtEnd = await helper.blogsInDb();
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
-    const blogsContent = blogsAtEnd.map((blog) => {
-      return {
-        title: blog.title,
-        author: blog.author,
-        url: blog.url,
-        likes: blog.likes,
-      };
+    const blogExists = blogsAtEnd.some((b) => {
+      return (
+        b.title === blog.title &&
+        b.author === blog.author &&
+        b.url === blog.url &&
+        b.likes === blog.likes &&
+        b.user.toString() === blog.userId
+      );
     });
-    expect(blogsContent).toContainEqual(blog);
+
+    expect(blogExists).toBe(true);
+
+    const blogCreatedId = blogCreated.body.id;
+    const query = User.findById(result.body.id);
+    const userSelected = await query.exec();
+    expect(userSelected.blogs.toString()).toContain(blogCreatedId);
   });
 
   test("blog without likes property defaults to 0", async () => {
+    const user = {
+      username: "root",
+      password: "sekret",
+    };
+    const result = await api
+      .post("/api/users")
+      .send(user)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
     const blog = {
       title: "New Blog",
       author: "New Author",
       url: "www.newurl.com",
+      userId: result.body.id,
     };
 
     await api
@@ -103,27 +132,36 @@ describe("addition of a new blog", () => {
       .expect("Content-Type", /application\/json/);
 
     const blogsAtEnd = await helper.blogsInDb();
+    console.log(blogsAtEnd);
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
-    const blogsContent = blogsAtEnd.map((blog) => {
-      return {
-        title: blog.title,
-        author: blog.author,
-        url: blog.url,
-        likes: blog.likes,
-      };
+    const blogExists = blogsAtEnd.some((b) => {
+      return (
+        b.title === blog.title &&
+        b.author === blog.author &&
+        b.url === blog.url &&
+        b.likes === 0 &&
+        b.user.toString() === blog.userId
+      );
     });
-    expect(blogsContent).toContainEqual({
-      title: "New Blog",
-      author: "New Author",
-      url: "www.newurl.com",
-      likes: 0,
-    });
+
+    expect(blogExists).toBe(true);
   });
 
   test("if title and url are missing, 400 is returned", async () => {
+    const user = {
+      username: "root",
+      password: "sekret",
+    };
+    const result = await api
+      .post("/api/users")
+      .send(user)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
     const blog = {
       author: "New Author",
       likes: 10,
+      userId: result.body.id,
     };
 
     await api.post("/api/blogs").send(blog).expect(400);

@@ -8,11 +8,22 @@ const requestLogger = (request, response, next) => {
   next();
 };
 
-const unknownEndpoint = (request, response) => {
+// middleware to get the token
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get("authorization");
+
+  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+    request.token = authorization.substring(7);
+  }
+
+  next();
+};
+
+const unknownEndpoint = (_request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, _request, response, next) => {
   // logger.error(error.message);
 
   if (error.name === "CastError") {
@@ -25,6 +36,7 @@ const errorHandler = (error, request, response, next) => {
 };
 
 module.exports = {
+  tokenExtractor,
   requestLogger,
   unknownEndpoint,
   errorHandler,

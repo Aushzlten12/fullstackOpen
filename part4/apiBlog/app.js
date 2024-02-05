@@ -12,14 +12,17 @@ const mongoose = require("mongoose");
 
 logger.info("connecting to", config.MONGODB_URI);
 
-(async () => {
+(async function() {
   try {
     await mongoose.connect(config.MONGODB_URI);
-    logger.info("connected to MongoDB");
   } catch (error) {
     logger.error("Error connecting to MongoDB:", error.message);
+    process.exit(1);
   }
 })();
+mongoose.connection.on("connected", () => {
+  logger.info("MongoDB connection established");
+});
 
 app.use(cors());
 // app.use(express.static("build"))
@@ -34,5 +37,11 @@ app.use("/api/login", loginRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
+
+process.on("SIGINT", async () => {
+  await mongoose.disconnect();
+  logger.info("MongoDB connection disconnected due to app termination");
+  process.exit(0);
+});
 
 module.exports = app;

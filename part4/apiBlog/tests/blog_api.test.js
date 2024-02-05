@@ -13,18 +13,28 @@ beforeEach(async () => {
   const passwordHash = await bcrypt.hash("sekret", 10);
   const user = new User({ username: "aushalten", passwordHash });
   await user.save();
-  const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog));
+  const blogObjects = helper.initialBlogs.map(
+    (blog) =>
+      new Blog({
+        title: blog.title,
+        url: blog.title,
+        likes: blog.likes,
+        author: user.username,
+        user: user.id,
+      }),
+  );
   const promiseArray = blogObjects.map((blog) => blog.save());
 
   await Promise.all(promiseArray);
-});
+}, 10000);
 
 describe("when there is initially some blogs saved", () => {
   test("blogs are returned as json", async () => {
-    await api
+    const result = await api
       .get("/api/blogs")
       .expect(200)
       .expect("Content-Type", /application\/json/);
+    console.log(result);
   });
 
   test("all blogs are returned", async () => {
@@ -79,7 +89,6 @@ describe("addition of a new blog", () => {
 
     const blog = {
       title: "New Blog",
-      author: "New Author",
       url: "www.newurl.com",
       likes: 10,
     };
@@ -125,7 +134,6 @@ describe("addition of a new blog", () => {
 
     const blog = {
       title: "New Blog",
-      author: "New Author",
       url: "www.newurl.com",
     };
     const headers = {
@@ -169,7 +177,6 @@ describe("addition of a new blog", () => {
     };
 
     const blog = {
-      author: "New Author",
       likes: 10,
     };
 
@@ -178,22 +185,99 @@ describe("addition of a new blog", () => {
 });
 
 describe("deletion of a blog", () => {
-  test("deleting a blog succeeds with status code 204 if id is valid", async () => {
+  beforeEach(async () => {
+    // Add new user with a blog
+    const passwordHashNewUser = await bcrypt.hash("1234", 10);
+    const newUser = new User({
+      username: "moon",
+      passwordHash: passwordHashNewUser,
+    });
+    await newUser.save();
+    const blog = new Blog({
+      title: "Test",
+      author: newUser.username,
+      url: "https://test.com",
+      likes: 12,
+      user: newUser.id,
+    });
+    await blog.save();
+  });
+
+  test("deleting a blog succeeds with status code 204 if id is valid and user is authorized", async () => {
     const blogsAtStart = await helper.blogsInDb();
+    const blogToDelete = blogsAtStart[2];
 
-    const blogToDelete = blogsAtStart[0];
+    const credentialsUser = {
+      username: "moon",
+      password: "1234",
+    };
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+    const resultLogin = await api
+      .post("/api/login")
+      .send(credentialsUser)
+      .expect(200);
+
+    const token = resultLogin.body.token;
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).set(headers).expect(204);
 
     const blogsAtEnd = await helper.blogsInDb();
 
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1);
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1);
   });
 
-  test("deleting a blog fails with status code 400 if id is invalid", async () => {
+  test("deleting a blog succeeds with status code 401 if id is valid and user is not authorized", async () => {
     const blogsAtStart = await helper.blogsInDb();
+    const blogToDelete = blogsAtStart[2];
+
+    const credentialsUser = {
+      username: "aushalten",
+      password: "sekret",
+    };
+
+    const resultLogin = await api
+      .post("/api/login")
+      .send(credentialsUser)
+      .expect(200);
+
+    const token = resultLogin.body.token;
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).set(headers).expect(401);
+
+    const blogsAtEnd = await helper.blogsInDb();
+
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length);
+  });
+
+  test("deleting a blog with an account valid but fails with status code 400 if id is invalid but", async () => {
+    const blogsAtStart = await helper.blogsInDb();
+
+    const credentialsUser = {
+      username: "moon",
+      password: "1234",
+    };
+
+    const resultLogin = await api
+      .post("/api/login")
+      .send(credentialsUser)
+      .expect(200);
+
+    const token = resultLogin.body.token;
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
     const invalidId = "5a3d5da59070081a82a3445";
-    await api.delete(`/api/blogs/${invalidId}`).expect(400);
+    await api.delete(`/api/blogs/${invalidId}`).set(headers).expect(400);
     const blogsAtEnd = await helper.blogsInDb();
     expect(blogsAtEnd).toEqual(blogsAtStart);
   });
@@ -208,8 +292,13 @@ describe("updating a blog", () => {
       .send({ likes: 10 })
       .expect(200)
       .expect("Content-Type", /application\/json/);
+    console.log(UpdatedBlog.body);
     const blogsAtEnd = await helper.blogsInDb();
-    expect(blogsAtEnd).toContainEqual(UpdatedBlog.body);
+    const blogWithStringUser = blogsAtEnd.map((blog) => ({
+      ...blog,
+      user: blog.user.toString(),
+    }));
+    expect(blogWithStringUser).toContainEqual(UpdatedBlog.body);
   });
 
   test("updating likes of an invalid blog", async () => {
@@ -218,7 +307,7 @@ describe("updating a blog", () => {
   });
 });
 
-afterAll(() => {
-  mongoose.connection.close();
+afterAll(async () => {
+  await mongoose.connection.close();
   // console.log("Closed connection");
 });

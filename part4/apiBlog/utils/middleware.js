@@ -9,7 +9,7 @@ const requestLogger = (request, response, next) => {
 };
 
 // middleware to get the token
-const tokenExtractor = (request, response, next) => {
+const tokenExtractor = (request, _response, next) => {
   const authorization = request.get("authorization");
 
   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {

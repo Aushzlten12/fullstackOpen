@@ -12,11 +12,22 @@ const requestLogger = (request, response, next) => {
 
 const userExtractor = async (request, response, next) => {
   const authorization = request.get("authorization");
+  if (!authorization || !authorization.toLowerCase().startsWith("bearer ")) {
+    return response
+      .status(401)
+      .json({ error: "Invalid or missing authorization header" });
+  }
 
   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
     const token = authorization.substring(7);
+    if (!token) {
+      return response.status(401).json({ error: "token missing" });
+    }
     try {
       const decodedToken = jwt.verify(token, process.env.SECRET);
+      if (!decodedToken.id) {
+        return response.status(401).json({ error: "token invalid" });
+      }
       if (decodedToken.id) {
         request.user = await User.findById(decodedToken.id);
       }
@@ -25,11 +36,6 @@ const userExtractor = async (request, response, next) => {
       // Si el token es inválido o está ausente, simplemente continúa con el siguiente middleware
       next();
     }
-  }
-  if (!authorization || !authorization.toLowerCase().startsWith("bearer ")) {
-    return response
-      .status(401)
-      .json({ error: "Invalid or missing authorization header" });
   }
 };
 

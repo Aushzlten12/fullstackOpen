@@ -78,7 +78,7 @@ describe("viewing a specific blog", () => {
 });
 
 describe("addition of a new blog", () => {
-  test("a valid blog can be added", async () => {
+  test("a valid blog can be added with valid token", async () => {
     const user = {
       username: "aushalten",
       password: "sekret",
@@ -121,6 +121,19 @@ describe("addition of a new blog", () => {
     const query = User.findById(userFound._id.toString());
     const userSelected = await query.exec();
     expect(userSelected.blogs.toString()).toContain(blogCreatedId);
+  });
+
+  test("added a valid blog but without a token", async () => {
+    const blog = {
+      title: "New Blog",
+      url: "www.newurl.com",
+      likes: 10,
+    };
+
+    const headers = {
+      Authorization: "Bearer ",
+    };
+    await api.post("/api/blogs").set(headers).send(blog).expect(401);
   });
 
   test("blog without likes property defaults to 0", async () => {

@@ -20,9 +20,12 @@ logger.info("connecting to", config.MONGODB_URI);
     process.exit(1);
   }
 })();
-mongoose.connection.on("connected", () => {
-  logger.info("MongoDB connection established");
-});
+
+if (process.env.NODE_ENV === "test") {
+  mongoose.connection.on("connected", () => {
+    logger.info("MongoDB connection established");
+  });
+}
 
 app.use(cors());
 // app.use(express.static("build"))

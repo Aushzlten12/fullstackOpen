@@ -21,7 +21,7 @@ logger.info("connecting to", config.MONGODB_URI);
   }
 })();
 
-if (process.env.NODE_ENV === "test") {
+if (process.env.NODE_ENV === "development") {
   mongoose.connection.on("connected", () => {
     logger.info("MongoDB connection established");
   });

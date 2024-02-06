@@ -1,4 +1,6 @@
 const logger = require("../utils/logger");
+const jwt = require("jsonwebtoken");
+const User = require("./../models/user");
 
 const requestLogger = (request, response, next) => {
   logger.info("Method:", request.method);
@@ -8,15 +10,27 @@ const requestLogger = (request, response, next) => {
   next();
 };
 
-// middleware to get the token
-const tokenExtractor = (request, _response, next) => {
+const userExtractor = async (request, response, next) => {
   const authorization = request.get("authorization");
 
   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
-    request.token = authorization.substring(7);
+    const token = authorization.substring(7);
+    try {
+      const decodedToken = jwt.verify(token, process.env.SECRET);
+      if (decodedToken.id) {
+        request.user = await User.findById(decodedToken.id);
+      }
+      next();
+    } catch (error) {
+      // Si el token es inválido o está ausente, simplemente continúa con el siguiente middleware
+      next();
+    }
   }
-
-  next();
+  if (!authorization || !authorization.toLowerCase().startsWith("bearer ")) {
+    return response
+      .status(401)
+      .json({ error: "Invalid or missing authorization header" });
+  }
 };
 
 const unknownEndpoint = (_request, response) => {
@@ -36,8 +50,8 @@ const errorHandler = (error, _request, response, next) => {
 };
 
 module.exports = {
-  tokenExtractor,
   requestLogger,
   unknownEndpoint,
   errorHandler,
+  userExtractor,
 };

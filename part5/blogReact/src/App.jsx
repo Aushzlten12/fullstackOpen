@@ -1,7 +1,7 @@
 import "./index.css";
 import { useEffect, useState } from "react";
 import { Blog } from "./components/Blog";
-import { getAll, update } from "./services/blogs";
+import { getAll, update, setToken } from "./services/blogs";
 import { login } from "./services/login";
 import { Footer } from "./components/Footer";
 import { Login } from "./components/Login";
@@ -29,6 +29,15 @@ function App() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const loggedUserJson = window.localStorage.getItem("loggedBlogappUser");
+    if (loggedUserJson) {
+      const user = JSON.parse(loggedUserJson);
+      setUser(user);
+      setToken(user.token);
+    }
+  }, []);
+
   const handleLogin = async (event) => {
     event.preventDefault();
 
@@ -37,6 +46,11 @@ function App() {
         username,
         password,
       });
+      window.localStorage.setItem(
+        "loggedBlogappUser",
+        JSON.stringify(userCredentials),
+      );
+      setToken(userCredentials.token);
       setUser(userCredentials);
       setUsername("");
       setPassword("");

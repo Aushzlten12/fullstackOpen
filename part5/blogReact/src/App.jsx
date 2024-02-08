@@ -1,35 +1,98 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./index.css";
+import { useEffect, useState } from "react";
+import { Blog } from "./components/Blog";
+import { getAll, update } from "./services/blogs";
+import { login } from "./services/login";
+import { Footer } from "./components/Footer";
+import { Login } from "./components/Login";
+import { ErrorMessage } from "./components/ErrorMessage";
+import { Header } from "./components/Header";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [blogs, setBlogs] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const initialBlogs = await getAll();
+        setBlogs(initialBlogs);
+      } catch (error) {
+        console.error("Error fetching initial blogs:", error);
+        setErrorMessage("Error fetching blogs");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+
+    try {
+      const userCredentials = await login({
+        username,
+        password,
+      });
+      setUser(userCredentials);
+      setUsername("");
+      setPassword("");
+    } catch (error) {
+      setErrorMessage("Credentials not valid");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
+
+  const aumentLikes = async (id) => {
+    const blog = blogs.find((blog) => blog.id === id);
+    const blogChanged = { ...blog, likes: blog.likes + 1 };
+    try {
+      const returnedBlog = await update(id, blogChanged);
+      setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)));
+    } catch (error) {
+      setErrorMessage(`Blog ${blog.title} was already remove from server`);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+      setBlogs(blogs.filter((blog) => blog.id === id));
+    }
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Header user={user} />
+      {errorMessage !== null && <ErrorMessage errorMessage={errorMessage} />}
+      {user === null && (
+        <Login
+          handleLogin={handleLogin}
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
+        />
+      )}
+      {user !== null && (
+        <ul>
+          {blogs.map((blog) => (
+            <Blog
+              key={blog.id}
+              title={blog.title}
+              author={blog.author}
+              url={blog.url}
+              likes={blog.likes}
+              aumentLikes={() => aumentLikes(blog.id)}
+            />
+          ))}
+        </ul>
+      )}
+      <Footer />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

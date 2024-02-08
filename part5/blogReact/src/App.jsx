@@ -77,9 +77,14 @@ function App() {
     }
   };
 
+  const out = () => {
+    setUser(null);
+    window.localStorage.removeItem("loggedBlogappUser");
+  };
+
   return (
     <>
-      <Header user={user} />
+      <Header user={user} out={out} />
       {errorMessage !== null && <ErrorMessage errorMessage={errorMessage} />}
       {user === null && (
         <Login

@@ -1,12 +1,13 @@
 import "./index.css";
 import { useEffect, useState } from "react";
 import { Blog } from "./components/Blog";
-import { getAll, update, setToken } from "./services/blogs";
+import { getAll, update, setToken, create } from "./services/blogs";
 import { login } from "./services/login";
 import { Footer } from "./components/Footer";
 import { Login } from "./components/Login";
 import { ErrorMessage } from "./components/ErrorMessage";
 import { Header } from "./components/Header";
+import { FormNewBlog } from "./components/FormNewBlog";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
@@ -14,6 +15,8 @@ function App() {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +40,24 @@ function App() {
       setToken(user.token);
     }
   }, []);
+
+  const handleCreate = async (event) => {
+    event.preventDefault();
+    try {
+      const blogCreated = await create({
+        title,
+        url,
+      });
+      setBlogs(blogs.concat(blogCreated));
+      setUrl("");
+      setTitle("");
+    } catch (error) {
+      setErrorMessage("Parameters not valid");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 2000);
+    }
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -96,18 +117,28 @@ function App() {
         />
       )}
       {user !== null && (
-        <ul>
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              title={blog.title}
-              author={blog.author}
-              url={blog.url}
-              likes={blog.likes}
-              aumentLikes={() => aumentLikes(blog.id)}
-            />
-          ))}
-        </ul>
+        <div>
+          <FormNewBlog
+            handleCreate={handleCreate}
+            title={title}
+            setTitle={setTitle}
+            author={user.username}
+            url={url}
+            setUrl={setUrl}
+          />
+          <ul>
+            {blogs.map((blog) => (
+              <Blog
+                key={blog.id}
+                title={blog.title}
+                author={blog.author}
+                url={blog.url}
+                likes={blog.likes}
+                aumentLikes={() => aumentLikes(blog.id)}
+              />
+            ))}
+          </ul>
+        </div>
       )}
       <Footer />
     </>

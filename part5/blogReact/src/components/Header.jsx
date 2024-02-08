@@ -5,11 +5,14 @@ export const Header = ({ user, out }) => (
     <h1 className="text-center font-bold text-5xl">Blogs</h1>
     {user !== null && (
       <div className="flex">
-        <p className="px-4 py-2">
+        <p className="px-4 py-2 capitalize">
           <span className="font-bold text-gray-900">{user.name}</span> logged in
         </p>
-        <button className="border rounded px-2" onClick={out}>
-          logout
+        <button
+          className="border border-red-900 rounded capitalize px-2 bg-red-100"
+          onClick={out}
+        >
+          log out
         </button>
       </div>
     )}

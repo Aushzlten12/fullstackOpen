@@ -5,13 +5,14 @@ import { getAll, update, setToken, create } from "./services/blogs";
 import { login } from "./services/login";
 import { Footer } from "./components/Footer";
 import { Login } from "./components/Login";
-import { ErrorMessage } from "./components/ErrorMessage";
+import { Notification } from "./components/Notification";
 import { Header } from "./components/Header";
 import { FormNewBlog } from "./components/FormNewBlog";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [notification, setNotification] = useState(null);
+  const [color, setColor] = useState("");
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +26,7 @@ function App() {
         setBlogs(initialBlogs);
       } catch (error) {
         console.error("Error fetching initial blogs:", error);
-        setErrorMessage("Error fetching blogs");
+        setNotification("Error fetching blogs");
       }
     };
 
@@ -48,13 +49,21 @@ function App() {
         title,
         url,
       });
+      setNotification(
+        `A new blog ${blogCreated.title} by ${blogCreated.author} added`,
+      );
       setBlogs(blogs.concat(blogCreated));
+      setColor("green");
+      setTimeout(() => {
+        setNotification(null);
+      }, 2000);
       setUrl("");
       setTitle("");
     } catch (error) {
-      setErrorMessage("Parameters not valid");
+      setNotification("Parameters not valid");
+      setColor("red");
       setTimeout(() => {
-        setErrorMessage(null);
+        setNotification(null);
       }, 2000);
     }
   };
@@ -76,9 +85,10 @@ function App() {
       setUsername("");
       setPassword("");
     } catch (error) {
-      setErrorMessage("Credentials not valid");
+      setNotification("wrong username or password");
+      setColor("red");
       setTimeout(() => {
-        setErrorMessage(null);
+        setNotification(null);
       }, 5000);
     }
   };
@@ -90,9 +100,9 @@ function App() {
       const returnedBlog = await update(id, blogChanged);
       setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)));
     } catch (error) {
-      setErrorMessage(`Blog ${blog.title} was already remove from server`);
+      setNotification(`Blog ${blog.title} was already remove from server`);
       setTimeout(() => {
-        setErrorMessage(null);
+        setNotification(null);
       }, 5000);
       setBlogs(blogs.filter((blog) => blog.id === id));
     }
@@ -106,7 +116,9 @@ function App() {
   return (
     <>
       <Header user={user} out={out} />
-      {errorMessage !== null && <ErrorMessage errorMessage={errorMessage} />}
+      {notification !== null && (
+        <Notification notification={notification} color={color} />
+      )}
       {user === null && (
         <Login
           handleLogin={handleLogin}

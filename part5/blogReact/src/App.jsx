@@ -8,6 +8,7 @@ import { Login } from "./components/Login";
 import { Notification } from "./components/Notification";
 import { Header } from "./components/Header";
 import { FormNewBlog } from "./components/FormNewBlog";
+import { Togglable } from "./components/Togglable";
 
 function App() {
   const [blogs, setBlogs] = useState([]);
@@ -130,14 +131,16 @@ function App() {
       )}
       {user !== null && (
         <div>
-          <FormNewBlog
-            handleCreate={handleCreate}
-            title={title}
-            setTitle={setTitle}
-            author={user.username}
-            url={url}
-            setUrl={setUrl}
-          />
+          <Togglable buttonLabel="New Blog">
+            <FormNewBlog
+              handleCreate={handleCreate}
+              title={title}
+              setTitle={setTitle}
+              author={user.username}
+              url={url}
+              setUrl={setUrl}
+            />
+          </Togglable>
           <ul>
             {blogs.map((blog) => (
               <Blog

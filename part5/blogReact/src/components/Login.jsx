@@ -1,15 +1,30 @@
 import PropTypes from "prop-types";
-export const Login = ({
-  handleLogin,
-  username,
-  setUsername,
-  password,
-  setPassword,
-}) => {
+import { useState } from "react";
+export const Login = ({ HandleLogin }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleChangeUsername = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handleChangePassword = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const LogInUser = (event) => {
+    event.preventDefault();
+    HandleLogin({
+      username: username,
+      password: password,
+    });
+    setUsername("");
+    setPassword("");
+  };
   return (
     <>
       <form
-        onSubmit={handleLogin}
+        onSubmit={LogInUser}
         className="max-w-xs mt-8 mx-auto bg-gray-100 p-8 rounded shadow-md"
       >
         <div className="mb-4">
@@ -23,7 +38,7 @@ export const Login = ({
             type="text"
             value={username}
             name="Username"
-            onChange={({ target }) => setUsername(target.value)}
+            onChange={handleChangeUsername}
             className="w-full py-2 px-3 border border-gray-300 rounded focus:outline-none focus:border-b-indigo-500 placeholder-gray-500 placeholder-opacity-50"
             placeholder="Enter your username"
           />
@@ -40,7 +55,7 @@ export const Login = ({
             value={password}
             name="Password"
             className="w-full py-2 px-3 border border-gray-300 rounded focus:outline-none focus:border-b-indigo-500 placeholder-gray-500 placeholder-opacity-50"
-            onChange={({ target }) => setPassword(target.value)}
+            onChange={handleChangePassword}
             placeholder="Enter your password"
           />
         </div>
@@ -56,9 +71,5 @@ export const Login = ({
 };
 
 Login.propTypes = {
-  handleLogin: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  setUsername: PropTypes.func.isRequired,
-  password: PropTypes.string.isRequired,
-  setPassword: PropTypes.func.isRequired,
+  HandleLogin: PropTypes.func.isRequired,
 };

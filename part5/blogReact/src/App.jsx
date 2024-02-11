@@ -15,10 +15,6 @@ function App() {
   const [notification, setNotification] = useState(null);
   const [color, setColor] = useState("");
   const [user, setUser] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,55 +39,37 @@ function App() {
     }
   }, []);
 
-  const handleCreate = async (event) => {
-    event.preventDefault();
-    try {
-      const blogCreated = await create({
-        title,
-        url,
+  const addBlog = (blogObject) => {
+    create(blogObject)
+      .then((returnedBlog) => {
+        setBlogs(blogs.concat(returnedBlog));
+      })
+      .catch(() => {
+        setNotification("wrong parameters");
+        setColor("red");
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
       });
-      setNotification(
-        `A new blog ${blogCreated.title} by ${blogCreated.author} added`,
-      );
-      setBlogs(blogs.concat(blogCreated));
-      setColor("green");
-      setTimeout(() => {
-        setNotification(null);
-      }, 2000);
-      setUrl("");
-      setTitle("");
-    } catch (error) {
-      setNotification("Parameters not valid");
-      setColor("red");
-      setTimeout(() => {
-        setNotification(null);
-      }, 2000);
-    }
   };
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-
-    try {
-      const userCredentials = await login({
-        username,
-        password,
+  const handleLogin = (userObject) => {
+    login(userObject)
+      .then((userCredentials) => {
+        window.localStorage.setItem(
+          "loggedBlogappUser",
+          JSON.stringify(userCredentials),
+        );
+        setToken(userCredentials.token);
+        setUser(userCredentials);
+      })
+      .catch(() => {
+        setNotification("wrong username or password");
+        setColor("red");
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
       });
-      window.localStorage.setItem(
-        "loggedBlogappUser",
-        JSON.stringify(userCredentials),
-      );
-      setToken(userCredentials.token);
-      setUser(userCredentials);
-      setUsername("");
-      setPassword("");
-    } catch (error) {
-      setNotification("wrong username or password");
-      setColor("red");
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
-    }
   };
 
   const aumentLikes = async (id) => {
@@ -120,26 +98,11 @@ function App() {
       {notification !== null && (
         <Notification notification={notification} color={color} />
       )}
-      {user === null && (
-        <Login
-          handleLogin={handleLogin}
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}
-        />
-      )}
+      {user === null && <Login HandleLogin={handleLogin} />}
       {user !== null && (
         <div>
           <Togglable buttonLabel="New Blog">
-            <FormNewBlog
-              handleCreate={handleCreate}
-              title={title}
-              setTitle={setTitle}
-              author={user.username}
-              url={url}
-              setUrl={setUrl}
-            />
+            <FormNewBlog createBlog={addBlog} author={user.username} />
           </Togglable>
           <ul>
             {blogs.map((blog) => (

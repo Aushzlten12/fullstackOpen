@@ -108,16 +108,19 @@ function App() {
             <FormNewBlog createBlog={addBlog} author={user.username} />
           </Togglable>
           <ul>
-            {blogs.map((blog) => (
-              <Blog
-                key={blog.id}
-                title={blog.title}
-                author={blog.author}
-                url={blog.url}
-                likes={blog.likes}
-                aumentLikes={() => aumentLikes(blog.id)}
-              />
-            ))}
+            {blogs
+              .slice()
+              .sort((a, b) => b.likes - a.likes)
+              .map((blog) => (
+                <Blog
+                  key={blog.id}
+                  title={blog.title}
+                  author={blog.author}
+                  url={blog.url}
+                  likes={blog.likes}
+                  aumentLikes={() => aumentLikes(blog.id)}
+                />
+              ))}
           </ul>
         </div>
       )}

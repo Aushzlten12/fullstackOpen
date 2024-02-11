@@ -17,16 +17,14 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const initialBlogs = await getAll();
-        setBlogs(initialBlogs);
-      } catch (error) {
-        console.error("Error fetching initial blogs:", error);
+    getAll()
+      .then((initalBlos) => {
+        setBlogs(initalBlos);
+      })
+      .catch((error) => {
+        console.error("Error fetching inital blogs", error);
         setNotification("Error fetching blogs");
-      }
-    };
-    fetchData();
+      });
   }, []);
 
   useEffect(() => {
@@ -71,19 +69,25 @@ function App() {
       });
   };
 
-  const aumentLikes = async (id) => {
+  const aumentLikes = (id) => {
     const blog = blogs.find((blog) => blog.id === id);
-    const blogChanged = { ...blog, likes: blog.likes + 1 };
-    try {
-      const returnedBlog = await update(id, blogChanged);
-      setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)));
-    } catch (error) {
-      setNotification(`Blog ${blog.title} was already remove from server`);
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
-      setBlogs(blogs.filter((blog) => blog.id === id));
-    }
+    const blogChanged = {
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+    };
+    update(id, blogChanged)
+      .then((returnedBlog) => {
+        setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)));
+      })
+      .catch(() => {
+        setNotification(`Blog ${blog.title} was already remove from server`);
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      });
   };
 
   const out = () => {

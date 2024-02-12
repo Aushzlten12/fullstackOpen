@@ -1,7 +1,7 @@
 import "./index.css";
 import { useEffect, useState } from "react";
 import { Blog } from "./components/Blog";
-import { getAll, update, setToken, create } from "./services/blogs";
+import { getAll, remove, update, setToken, create } from "./services/blogs";
 import { login } from "./services/login";
 import { Footer } from "./components/Footer";
 import { Login } from "./components/Login";
@@ -69,6 +69,26 @@ function App() {
       });
   };
 
+  const handleRemove = (id) => {
+    const blogRemoved = blogs.find((blog) => blog.id === id);
+    remove(id)
+      .then(() => {
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+        setNotification(`${blogRemoved.title} has removed`);
+        setColor("green");
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      })
+      .catch(() => {
+        setNotification("Can't remove this blog");
+        setColor("red");
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      });
+  };
+
   const aumentLikes = (id) => {
     const blog = blogs.find((blog) => blog.id === id);
     const blogChanged = {
@@ -83,6 +103,7 @@ function App() {
         setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)));
       })
       .catch(() => {
+        setColor("red");
         setNotification(`Blog ${blog.title} was already remove from server`);
         setTimeout(() => {
           setNotification(null);
@@ -111,16 +132,19 @@ function App() {
             {blogs
               .slice()
               .sort((a, b) => b.likes - a.likes)
-              .map((blog) => (
-                <Blog
-                  key={blog.id}
-                  title={blog.title}
-                  author={blog.author}
-                  url={blog.url}
-                  likes={blog.likes}
-                  aumentLikes={() => aumentLikes(blog.id)}
-                />
-              ))}
+              .map((blog) => {
+                const userHasCreateBlog = user.username === blog.author;
+                console.log(userHasCreateBlog);
+                return (
+                  <Blog
+                    key={blog.id}
+                    blog={blog}
+                    createdByUser={userHasCreateBlog}
+                    aumentLikes={() => aumentLikes(blog.id)}
+                    remove={handleRemove}
+                  />
+                );
+              })}
           </ul>
         </div>
       )}

@@ -23,5 +23,5 @@ export const Notification = ({ notification, color }) => {
 
 Notification.propTypes = {
   notification: PropTypes.string.isRequired,
-  color: PropTypes.isRequired,
+  color: PropTypes.string.isRequired,
 };

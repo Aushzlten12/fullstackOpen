@@ -1,5 +1,5 @@
 import "./index.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Blog } from "./components/Blog";
 import { getAll, remove, update, setToken, create } from "./services/blogs";
 import { login } from "./services/login";
@@ -15,6 +15,8 @@ function App() {
   const [notification, setNotification] = useState(null);
   const [color, setColor] = useState("");
   const [user, setUser] = useState(null);
+
+  const blogFormRef = useRef();
 
   useEffect(() => {
     getAll()
@@ -37,6 +39,7 @@ function App() {
   }, []);
 
   const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility();
     create(blogObject)
       .then((returnedBlog) => {
         setBlogs(blogs.concat(returnedBlog));
@@ -125,7 +128,7 @@ function App() {
       {user === null && <Login HandleLogin={handleLogin} />}
       {user !== null && (
         <div>
-          <Togglable buttonLabel="New Blog">
+          <Togglable buttonLabel="New Blog" ref={blogFormRef}>
             <FormNewBlog createBlog={addBlog} author={user.username} />
           </Togglable>
           <ul>

@@ -47,3 +47,5 @@ Togglable.propTypes = {
     }),
   }),
 };
+
+Togglable.displayName = "Togglable";

@@ -20,6 +20,7 @@ graph TD
   D --> P[searchcountry]
   E --> Q[apiPersons]
   F --> R[apiBlog]
+  G --> S[blogReact]
 ```
 
 <!-- Const Var -- pending -->

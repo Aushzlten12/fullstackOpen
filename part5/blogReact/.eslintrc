@@ -1,0 +1,33 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "react-hooks"
+  ],
+  "rules": {
+    "react/prop-types": "warn", // Puedes activar esta regla si deseas validar propTypes
+    "react/react-in-jsx-scope": "off", // Necesario desactivar si estás usando React 17 o superior
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-unused-vars": "warn",
+    "no-console": "off"
+    // Puedes agregar más reglas según tus preferencias
+  },
+  "settings": {
+    "react": {
+      "version": "17.0.2"
+    }
+  }
+}

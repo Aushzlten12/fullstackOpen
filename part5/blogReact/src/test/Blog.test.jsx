@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect } from "vitest";
 import { Blog } from "./../components/Blog";
 
@@ -37,5 +37,16 @@ describe("<Blog />", () => {
     const buttonlike = document.querySelector("#likeButton");
     expect(buttonlike).toBeDefined();
     expect(buttonlike).not.toBeVisible();
+  });
+
+  test("should show url and likes when i click show button", () => {
+    const buttonToShow = document.querySelector("#togglableButton");
+    fireEvent.click(buttonToShow);
+    const url = screen.getByText("https://www.test.com");
+    expect(url).toBeDefined();
+    expect(url).toBeVisible();
+    const buttonlike = document.querySelector("#likeButton");
+    expect(buttonlike).toBeDefined();
+    expect(buttonlike).toBeVisible();
   });
 });

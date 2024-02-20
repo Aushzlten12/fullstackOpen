@@ -37,30 +37,35 @@ export const FormNewBlog = ({ createBlog, author }) => {
             type="text"
             value={title}
             name="Title"
+            placeholder="Enter your blog title"
             className="w-full py-2 px-3 border border-gray-300 rounded focus:outline-none focus:border-b-indigo-500 placeholder-gray-500 placeholder-opacity-50 "
             onChange={handleChangeTitle}
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="title" className="block text-gray-700 font-bold mb-2">
+          <label
+            htmlFor="author"
+            className="block text-gray-700 font-bold mb-2"
+          >
             Author
           </label>
           <input
             type="text"
             value={author}
             name="Author"
-            disabled="disabled"
+            readOnly
             className="w-full py-2 px-3 border border-gray-300 rounded focus:outline-none focus:border-b-indigo-500 placeholder-gray-500 placeholder-opacity-50 "
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="title" className="block text-gray-700 font-bold mb-2">
+          <label htmlFor="url" className="block text-gray-700 font-bold mb-2">
             Url
           </label>
           <input
             type="url"
             value={url}
-            name="Author"
+            name="Url"
+            placeholder="Enter your blog url"
             onChange={handleChangeUrl}
             className="w-full py-2 px-3 border border-gray-300 rounded focus:outline-none focus:border-b-indigo-500 placeholder-gray-500 placeholder-opacity-50 "
           />

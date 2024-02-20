@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect } from "vitest";
+import { beforeEach, describe, expect, vi } from "vitest";
 import { Blog } from "./../components/Blog";
+import userEvent from "@testing-library/user-event";
 
 describe("<Blog />", () => {
   const blog = {
@@ -11,12 +12,14 @@ describe("<Blog />", () => {
     id: 1,
   };
 
+  const mockLikeHandler = vi.fn();
+
   beforeEach(() => {
     render(
       <Blog
         blog={blog}
-        aumentLikes={() => { }}
-        remove={() => { }}
+        aumentLikes={mockLikeHandler}
+        remove={() => {}}
         createdByUser={false}
       />,
     ).container;
@@ -48,5 +51,17 @@ describe("<Blog />", () => {
     const buttonlike = document.querySelector("#likeButton");
     expect(buttonlike).toBeDefined();
     expect(buttonlike).toBeVisible();
+  });
+
+  test("should click like button twice", async () => {
+    const user = userEvent.setup();
+    const buttonLike = document.querySelector("#likeButton");
+    await user.click(buttonLike);
+
+    expect(mockLikeHandler.mock.calls).toHaveLength(1);
+
+    await user.click(buttonLike);
+
+    expect(mockLikeHandler.mock.calls).toHaveLength(2);
   });
 });

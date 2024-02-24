@@ -3,8 +3,16 @@ describe("Blog app", function() {
   beforeEach(function() {
     // COMPLETE: Need to add testing controller
     cy.request("POST", "http://localhost:3003/api/testing/reset");
+    // COMPLETE: Create a user to backend
+    const user = {
+      name: "Aushalten12",
+      username: "aushalten",
+      password: "root",
+    };
+    cy.request("POST", "http://localhost:3003/api/users", user);
     cy.visit("http://localhost:5173");
   });
+  // TEST: When I open the web page it should show me the login form
   it("Login form is shown", function() {
     // NOTE: Verify if exist a form
     cy.get("form").as("loginForm");
@@ -29,5 +37,39 @@ describe("Blog app", function() {
       .should("exist")
       .should("be.visible");
     // COMPLETE: The form contains
+  });
+  // TEST: Login Form behavior
+  // PENDING: Add Login tests
+  describe("Login", function() {
+    it("succeeds with correct credentials", function() {
+      // COMPLETE: Type in the inputs correct credentials to log in
+      cy.get("#usernameInput").type("aushalten");
+      cy.get("#passwordInput").type("root");
+      cy.get("#submitButton").click();
+      cy.get("p")
+        .invoke("text")
+        .should("match", /Aushalten12 logged in/i);
+    });
+    it.only("fails with wrong credentials", function() {
+      // COMPLETE: Type in the inputs wrong credentials and should show error message
+      cy.get("#usernameInput").type("aushalten");
+      cy.get("#passwordInput").type("wrong");
+      cy.get("#submitButton").click();
+      // IMPORTANT: Assertions for error message
+      cy.contains("wrong username or password").should(
+        "have.css",
+        "color",
+        "rgb(127, 29, 29)",
+      );
+      cy.contains("wrong username or password")
+        .parent()
+        .should("have.css", "background-color", "rgb(254, 226, 226)");
+      cy.get("img")
+        .should("have.attr", "alt", "error")
+        .should(function($img) {
+          const srcValue = $img.attr("src");
+          expect(srcValue).to.match(/error.png/i);
+        });
+    });
   });
 });

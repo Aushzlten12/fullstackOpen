@@ -35,6 +35,7 @@ export const Login = ({ HandleLogin }) => {
             Username
           </label>
           <input
+            id="usernameInput"
             type="text"
             value={username}
             name="Username"
@@ -51,6 +52,7 @@ export const Login = ({ HandleLogin }) => {
             Password
           </label>
           <input
+            id="passwordInput"
             type="password"
             value={password}
             name="Password"
@@ -60,6 +62,7 @@ export const Login = ({ HandleLogin }) => {
           />
         </div>
         <button
+          id="submitButton"
           type="submit"
           className="bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-700 focus:outline-none active:bg-indigo-800"
         >

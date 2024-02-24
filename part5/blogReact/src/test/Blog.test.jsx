@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { Blog } from "./../components/Blog";
 import userEvent from "@testing-library/user-event";
 
@@ -19,7 +19,7 @@ describe("<Blog />", () => {
       <Blog
         blog={blog}
         aumentLikes={mockLikeHandler}
-        remove={() => {}}
+        remove={() => { }}
         createdByUser={false}
       />,
     ).container;

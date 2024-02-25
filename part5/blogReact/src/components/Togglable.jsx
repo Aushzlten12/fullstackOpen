@@ -19,6 +19,7 @@ export const Togglable = forwardRef((props, refs) => {
     <div>
       <div style={hiddenWhehnVisible}>
         <button
+          id="buttonToggable"
           onClick={toggleVisibility}
           className="px-3 py-2 border rounded max-w-fit ml-3 bg-lime-200 font-bold"
         >

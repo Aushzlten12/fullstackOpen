@@ -34,6 +34,7 @@ export const FormNewBlog = ({ createBlog, author }) => {
             Title
           </label>
           <input
+            id="inputTitle"
             type="text"
             value={title}
             name="Title"
@@ -62,6 +63,7 @@ export const FormNewBlog = ({ createBlog, author }) => {
             Url
           </label>
           <input
+            id="inputUrl"
             type="url"
             value={url}
             name="Url"
@@ -71,6 +73,7 @@ export const FormNewBlog = ({ createBlog, author }) => {
           />
         </div>
         <button
+          id="buttonCreateBlog"
           type="submit"
           className="bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-700 focus:outline-none active:bg-indigo-800"
         >

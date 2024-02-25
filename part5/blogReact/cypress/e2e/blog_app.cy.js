@@ -16,6 +16,7 @@ describe("Blog app", function() {
   it("Login form is shown", function() {
     // NOTE: Verify if exist a form
     cy.get("form").as("loginForm");
+
     cy.get("@loginForm").should("exist");
     // IMPORTANT: For each element in form verify if exist and is in the form
     cy.get("@loginForm")
@@ -39,7 +40,7 @@ describe("Blog app", function() {
     // COMPLETE: The form contains
   });
   // TEST: Login Form behavior
-  // PENDING: Add Login tests
+  // COMPLETE: Add Login tests
   describe("Login", function() {
     it("succeeds with correct credentials", function() {
       // COMPLETE: Type in the inputs correct credentials to log in
@@ -50,7 +51,7 @@ describe("Blog app", function() {
         .invoke("text")
         .should("match", /Aushalten12 logged in/i);
     });
-    it.only("fails with wrong credentials", function() {
+    it("fails with wrong credentials", function() {
       // COMPLETE: Type in the inputs wrong credentials and should show error message
       cy.get("#usernameInput").type("aushalten");
       cy.get("#passwordInput").type("wrong");
@@ -70,6 +71,32 @@ describe("Blog app", function() {
           const srcValue = $img.attr("src");
           expect(srcValue).to.match(/error.png/i);
         });
+    });
+  });
+  // TEST: When user legged in ...
+  describe("When logged in", function() {
+    beforeEach(function() {
+      cy.request("POST", "http://localhost:3003/api/login", {
+        username: "aushalten",
+        password: "root",
+      }).then(({ body }) => {
+        localStorage.setItem("loggedBlogappUser", JSON.stringify(body));
+        cy.visit("http://localhost:5173");
+      });
+    });
+
+    it.only("A blog can be created", function() {
+      cy.contains(/new blog/i).click();
+      cy.get("#inputTitle").type("Blog for testing E2E");
+      cy.get("#inputUrl").type("https://E2ETest.com");
+      cy.get("#buttonCreateBlog").click();
+      cy.get(".blog")
+        .should("have.length", 1)
+        .find("h1")
+        .should("contain.text", "Blog for testing E2E");
+      cy.get(".blog").contains("aushalten");
+      cy.contains(/show/i).click();
+      cy.contains(/https:\/\/E2ETest.com/i);
     });
   });
 });

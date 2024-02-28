@@ -85,7 +85,7 @@ describe("Blog app", function() {
       });
     });
 
-    it.only("A blog can be created", function() {
+    it("A blog can be created", function() {
       cy.contains(/new blog/i).click();
       cy.get("#inputTitle").type("Blog for testing E2E");
       cy.get("#inputUrl").type("https://E2ETest.com");
@@ -97,6 +97,29 @@ describe("Blog app", function() {
       cy.get(".blog").contains("aushalten");
       cy.contains(/show/i).click();
       cy.contains(/https:\/\/E2ETest.com/i);
+    });
+
+    describe("When create a new blog", function() {
+      beforeEach(function() {
+        cy.request({
+          url: "http://localhost:3003/api/blogs",
+          method: "POST",
+          body: {
+            title: "Blog to test with cypress",
+            url: "http://Blog/test.com",
+          },
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem("loggedBlogappUser")).token}`,
+          },
+        });
+        cy.visit("http://localhost:5173");
+      });
+      it.only("User can like a blog", function() {
+        cy.contains(/show/i).click();
+        cy.get("#likeButton").should("have.text", "0");
+        cy.get("#likeButton").click();
+        cy.get("#likeButton").should("have.text", "1");
+      });
     });
   });
 });

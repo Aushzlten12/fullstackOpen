@@ -61,7 +61,7 @@ export const Blog = ({ blog, aumentLikes, remove, createdByUser }) => {
             {blog.likes}
           </button>
           {createdByUser && (
-            <button className="mt-2" onClick={removeBlog}>
+            <button className="mt-2" onClick={removeBlog} id="removeButton">
               <img className="w-7 h-7" src={ImageRemove} alt="remove" />
             </button>
           )}

@@ -114,11 +114,23 @@ describe("Blog app", function() {
         });
         cy.visit("http://localhost:5173");
       });
-      it.only("User can like a blog", function() {
+      it("User can like a blog", function() {
         cy.contains(/show/i).click();
         cy.get("#likeButton").should("have.text", "0");
         cy.get("#likeButton").click();
         cy.get("#likeButton").should("have.text", "1");
+      });
+      it.only("User can be delete his blog", function() {
+        cy.get("#removeButton").click();
+        cy.contains("Blog to test with cypress has removed").should(
+          "have.css",
+          "color",
+          "rgb(20, 83, 45)",
+        );
+        cy.contains("Blog to test with cypress has removed")
+          .parent()
+          .should("have.css", "background-color", "rgb(220, 252, 231)");
+        cy.get(".blog").should("have.length", 0);
       });
     });
   });

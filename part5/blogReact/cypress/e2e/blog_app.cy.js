@@ -120,7 +120,7 @@ describe("Blog app", function() {
         cy.get("#likeButton").click();
         cy.get("#likeButton").should("have.text", "1");
       });
-      it.only("User can be delete his blog", function() {
+      it("User can be delete his blog", function() {
         cy.get("#removeButton").click();
         cy.contains("Blog to test with cypress has removed").should(
           "have.css",
@@ -131,6 +131,27 @@ describe("Blog app", function() {
           .parent()
           .should("have.css", "background-color", "rgb(220, 252, 231)");
         cy.get(".blog").should("have.length", 0);
+      });
+
+      it.only("Only the user who created a blog can see the remove button", function() {
+        cy.get("#removeButton").should("be.visible");
+        cy.get("#logoutButton").click();
+        // COMPLETE: Create another user
+        const other_user = {
+          name: "UserTest",
+          username: "usertest",
+          password: "test",
+        };
+        cy.request("POST", "http://localhost:3003/api/users", other_user);
+        cy.request("POST", "http://localhost:3003/api/login", {
+          username: "usertest",
+          password: "test",
+        }).then(({ body }) => {
+          localStorage.setItem("loggedBlogappUser", JSON.stringify(body));
+          cy.visit("http://localhost:5173");
+        });
+        cy.contains(/show/i).click();
+        cy.get("#removeButton").should("not.exist");
       });
     });
   });

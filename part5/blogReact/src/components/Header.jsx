@@ -9,6 +9,7 @@ export const Header = ({ user, out }) => (
           <span className="font-bold text-gray-900">{user.name}</span> logged in
         </p>
         <button
+          id="logoutButton"
           className="border border-red-900 rounded capitalize px-2 bg-red-100"
           onClick={out}
         >

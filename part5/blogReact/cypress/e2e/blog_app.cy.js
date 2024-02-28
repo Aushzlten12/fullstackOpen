@@ -133,7 +133,7 @@ describe("Blog app", function() {
         cy.get(".blog").should("have.length", 0);
       });
 
-      it.only("Only the user who created a blog can see the remove button", function() {
+      it("Only the user who created a blog can see the remove button", function() {
         cy.get("#removeButton").should("be.visible");
         cy.get("#logoutButton").click();
         // COMPLETE: Create another user
@@ -152,6 +152,53 @@ describe("Blog app", function() {
         });
         cy.contains(/show/i).click();
         cy.get("#removeButton").should("not.exist");
+      });
+      // NOTE: Create another blog, with one likes not zero. Also give likes to blog with zero likes to see the change
+      describe("Create another blog", function() {
+        beforeEach(function() {
+          cy.request({
+            url: "http://localhost:3003/api/blogs",
+            method: "POST",
+            body: {
+              title: "Blog with likes to test",
+              url: "http://BlogLikes/test.com",
+              likes: 1,
+            },
+            headers: {
+              Authorization: `Bearer ${JSON.parse(localStorage.getItem("loggedBlogappUser")).token}`,
+            },
+          });
+          cy.visit("http://localhost:5173");
+        });
+        it("The blogs should be sorted by likes in ascending order", function() {
+          cy.get(".blog").eq(0).find("#togglableVisibility").click();
+          cy.get(".blog").eq(1).find("#togglableVisibility").click();
+          cy.get(".blog").eq(0).should("contain", "Blog with likes to test");
+          cy.get(".blog").eq(0).find("#likeButton").should("have.text", "1");
+          cy.get(".blog").eq(1).should("contain", "Blog to test with cypress");
+          cy.get(".blog").eq(1).find("#likeButton").should("have.text", "0");
+
+          cy.intercept("PUT", "**/blogs/*").as("getLikes");
+
+          cy.contains("Blog to test with cypress")
+            .parent()
+            .parent()
+            .parent()
+            .find("#likeButton")
+            .click();
+          cy.wait("@getLikes").then(function() {
+            cy.contains("Blog to test with cypress")
+              .parent()
+              .parent()
+              .parent()
+              .find("#likeButton")
+              .click();
+          });
+          cy.get(".blog").eq(0).should("contain", "Blog to test with cypress");
+          cy.get(".blog").eq(0).find("#likeButton").should("have.text", "2");
+          cy.get(".blog").eq(1).should("contain", "Blog with likes to test");
+          cy.get(".blog").eq(1).find("#likeButton").should("have.text", "1");
+        });
       });
     });
   });

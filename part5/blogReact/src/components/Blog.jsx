@@ -33,7 +33,7 @@ export const Blog = ({ blog, aumentLikes, remove, createdByUser }) => {
             </div>
 
             <button
-              id="togglableButton"
+              id="togglableVisibility"
               onClick={ToggleVisibility}
               className="px-3 py-1 rounded border font-bold bg-indigo-200 hover:bg-indigo-600 transition-all duration-300 ease-in-out"
             >

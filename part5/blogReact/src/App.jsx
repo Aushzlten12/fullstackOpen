@@ -1,7 +1,7 @@
 import "./index.css";
 import { useEffect, useRef, useState } from "react";
 import { Blog } from "./components/Blog";
-import { getAll, remove, update, setToken, create } from "./services/blogs";
+import { create, getAll, remove, setToken, update } from "./services/blogs";
 import { login } from "./services/login";
 import { Footer } from "./components/Footer";
 import { Login } from "./components/Login";
@@ -74,6 +74,7 @@ function App() {
 
   const handleRemove = (id) => {
     const blogRemoved = blogs.find((blog) => blog.id === id);
+
     remove(id)
       .then(() => {
         setBlogs(blogs.filter((blog) => blog.id !== id));

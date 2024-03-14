@@ -9,6 +9,7 @@ graph TD
   A --> E[part3]
   A --> F[part4]
   A --> G[part5]
+  A --> T[part6]
   B --> H[activity 4]
   B --> I[activity 5]
   B --> J[activity 6]
@@ -21,6 +22,7 @@ graph TD
   E --> Q[apiPersons]
   F --> R[apiBlog]
   G --> S[blogReact]
+  T --> U[unicafe-redux]
 ```
 
 <!-- Const Var -- pending -->

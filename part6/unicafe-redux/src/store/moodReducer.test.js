@@ -1,14 +1,14 @@
 import deepFreeze from "deep-freeze";
-import moodReducer, {
+import statReducer, {
   badIncremented,
   goodIncremented,
   okIncremented,
-  resetMoods,
+  resetstats,
 } from "./slice";
 
 describe("unicafe reducer", () => {
   const initialState = {
-    moods: {
+    stats: {
       good: 0,
       ok: 0,
       bad: 0,
@@ -20,7 +20,7 @@ describe("unicafe reducer", () => {
       type: "DO_NOTHING",
     };
 
-    const newState = moodReducer(undefined, action);
+    const newState = statReducer(undefined, action);
     expect(newState).toEqual(initialState);
   });
 
@@ -28,9 +28,9 @@ describe("unicafe reducer", () => {
     const state = initialState;
 
     deepFreeze(state);
-    const newState = moodReducer(state, goodIncremented());
+    const newState = statReducer(state, goodIncremented());
     expect(newState).toEqual({
-      moods: {
+      stats: {
         good: 1,
         ok: 0,
         bad: 0,
@@ -42,9 +42,9 @@ describe("unicafe reducer", () => {
     const state = initialState;
 
     deepFreeze(state);
-    const newState = moodReducer(state, badIncremented());
+    const newState = statReducer(state, badIncremented());
     expect(newState).toEqual({
-      moods: {
+      stats: {
         good: 0,
         ok: 0,
         bad: 1,
@@ -56,9 +56,9 @@ describe("unicafe reducer", () => {
     const state = initialState;
 
     deepFreeze(state);
-    const newState = moodReducer(state, okIncremented());
+    const newState = statReducer(state, okIncremented());
     expect(newState).toEqual({
-      moods: {
+      stats: {
         good: 0,
         ok: 1,
         bad: 0,
@@ -70,9 +70,9 @@ describe("unicafe reducer", () => {
     const state = initialState;
 
     deepFreeze(state);
-    const newState = moodReducer(state, resetMoods());
+    const newState = statReducer(state, resetstats());
     expect(newState).toEqual({
-      moods: {
+      stats: {
         good: 0,
         ok: 0,
         bad: 0,

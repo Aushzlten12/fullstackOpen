@@ -1,48 +1,48 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  moods: {
+  stats: {
     good: 0,
     ok: 0,
     bad: 0,
   },
 };
 
-export const moodSlice = createSlice({
-  name: "moods",
+export const statSlice = createSlice({
+  name: "stats",
   initialState,
   reducers: {
     goodIncremented: (state) => {
       return {
         ...state,
-        moods: {
-          ...state.moods,
-          good: state.moods.good + 1,
+        stats: {
+          ...state.stats,
+          good: state.stats.good + 1,
         },
       };
     },
     okIncremented: (state) => {
       return {
         ...state,
-        moods: {
-          ...state.moods,
-          ok: state.moods.ok + 1,
+        stats: {
+          ...state.stats,
+          ok: state.stats.ok + 1,
         },
       };
     },
     badIncremented: (state) => {
       return {
         ...state,
-        moods: {
-          ...state.moods,
-          bad: state.moods.bad + 1,
+        stats: {
+          ...state.stats,
+          bad: state.stats.bad + 1,
         },
       };
     },
-    resetMoods: (state) => {
+    resetstats: (state) => {
       return {
         ...state,
-        moods: {
+        stats: {
           good: 0,
           ok: 0,
           bad: 0,
@@ -52,7 +52,7 @@ export const moodSlice = createSlice({
   },
 });
 
-export const { goodIncremented, okIncremented, badIncremented, resetMoods } =
-  moodSlice.actions;
+export const { goodIncremented, okIncremented, badIncremented, resetstats } =
+  statSlice.actions;
 
-export default moodSlice.reducer;
+export default statSlice.reducer;

@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import moodReducer from "./slice";
+import statReducer from "./slice";
 
 const store = configureStore({
-  reducer: { moods: moodReducer },
+  reducer: { stats: statReducer },
 });
 
 export default store;
